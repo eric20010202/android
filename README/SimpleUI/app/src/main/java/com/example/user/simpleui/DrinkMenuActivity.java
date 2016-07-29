@@ -1,7 +1,8 @@
 package com.example.user.simpleui;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,20 +10,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrinkMenuActivity extends AppCompatActivity {
+public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDialog.OnDrinkOrderListener {
 
     ListView drinkMenuListView;
     TextView totalTextView;
 
-    String[] drinkNames = new String[]{"絕代雙Q奶茶", "優多綠", "冰淇淋紅茶", "隱藏版飲料"};
+    String[] drinkNames = new String[]{"White gourd tea", "Black tea", "Pearl black tea", "Milk black tea"};
     int[] lPrices = new int[]{25,35,35,25};
     int[] mPrices = new int[]{15,25,25,15};
     int[] images = new int[]{R.drawable.drink1, R.drawable.drink4, R.drawable.drink3, R.drawable.drink2};
@@ -67,11 +66,23 @@ public class DrinkMenuActivity extends AppCompatActivity {
         drinkMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Drink drink = (Drink)parent.getAdapter().getItem(position);
-                drinkOrderList.add(drink);
+                Drink drink = (Drink) parent.getAdapter().getItem(position);
+                showDrinkOrderDialog(drink);
                 setupTotalTextView();
             }
         });
+    }
+
+    private void  showDrinkOrderDialog(Drink drink)
+    {
+        FragmentManager fragmentManager = getFragmentManager();
+
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+
+        DrinkOrderDialog dialog = DrinkOrderDialog.newInstance();
+
+        dialog.show(ft, "DrinkOrderDialog");
+
     }
 
     public void setupTotalTextView()
@@ -89,13 +100,6 @@ public class DrinkMenuActivity extends AppCompatActivity {
     {
         Intent intent = new Intent();
         setResult(RESULT_OK, intent);
-        finish();
-    }
-    public void goBack(View view)
-    {
-        Intent intent = new Intent();
-        setResult(RESULT_CANCELED, intent);
-
         finish();
     }
 
@@ -135,4 +139,8 @@ public class DrinkMenuActivity extends AppCompatActivity {
         Log.d("debug", "DrinkMenuActivity onDestroy");
     }
 
+    @Override
+    public void onDrinkOrderFinished() {
+
+    }
 }
